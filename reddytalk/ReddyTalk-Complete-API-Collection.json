@@ -1,0 +1,770 @@
+{
+  "info": {
+    "name": "ReddyTalk Complete API Testing - ElevenLabs & Twilio",
+    "description": "Complete API testing collection for ReddyTalk with ElevenLabs voice synthesis and Twilio telephony integration",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8081",
+      "type": "string"
+    },
+    {
+      "key": "authToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "elevenLabsApiKey",
+      "value": "your_elevenlabs_api_key_here",
+      "type": "string"
+    },
+    {
+      "key": "elevenLabsVoiceId",
+      "value": "EXAVITQu4vr4xnSDxMaL",
+      "type": "string"
+    },
+    {
+      "key": "twilioAccountSid",
+      "value": "your_twilio_account_sid",
+      "type": "string"
+    },
+    {
+      "key": "twilioAuthToken",
+      "value": "your_twilio_auth_token",
+      "type": "string"
+    },
+    {
+      "key": "twilioPhoneNumber",
+      "value": "+1234567890",
+      "type": "string"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{authToken}}",
+        "type": "string"
+      }
+    ]
+  },
+  "item": [
+    {
+      "name": "1. Health & Status Checks",
+      "item": [
+        {
+          "name": "Basic Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/health",
+            "description": "Check if the API server is running"
+          }
+        },
+        {
+          "name": "System Status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/system/status",
+            "description": "Get complete system status including all services"
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Authentication",
+      "item": [
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.environment.set('authToken', jsonData.token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@reddytalk.ai\",\n  \"password\": \"admin123\"\n}"
+            },
+            "url": "{{baseUrl}}/api/auth/login",
+            "description": "Authenticate and receive JWT token"
+          }
+        },
+        {
+          "name": "Register New User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"newuser@example.com\",\n  \"password\": \"SecurePass123!\",\n  \"name\": \"New User\",\n  \"role\": \"staff\"\n}"
+            },
+            "url": "{{baseUrl}}/api/auth/register"
+          }
+        },
+        {
+          "name": "Verify Token",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/auth/verify"
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. ElevenLabs Voice Integration",
+      "item": [
+        {
+          "name": "Schedule Appointment via Voice",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer your-secure-webhook-token"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"patient_name\": \"John Smith\",\n  \"phone_number\": \"+15551234567\",\n  \"preferred_date\": \"2024-03-15\",\n  \"preferred_time\": \"14:30\",\n  \"appointment_type\": \"follow_up\",\n  \"reason_for_visit\": \"Regular checkup for blood pressure monitoring\",\n  \"doctor_preference\": \"Dr. Sarah Wilson\",\n  \"insurance_provider\": \"Blue Cross Blue Shield\",\n  \"date_of_birth\": \"1985-06-20\"\n}"
+            },
+            "url": "{{baseUrl}}/api/elevenlabs/schedule",
+            "description": "Schedule appointment through ElevenLabs voice agent"
+          }
+        },
+        {
+          "name": "Check Appointment Availability",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer your-secure-webhook-token"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/elevenlabs/availability?date=2024-03-15&appointment_type=follow_up&doctor_name=Dr. Sarah Wilson",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "elevenlabs", "availability"],
+              "query": [
+                {
+                  "key": "date",
+                  "value": "2024-03-15"
+                },
+                {
+                  "key": "appointment_type",
+                  "value": "follow_up"
+                },
+                {
+                  "key": "doctor_name",
+                  "value": "Dr. Sarah Wilson"
+                }
+              ]
+            },
+            "description": "Check available appointment slots"
+          }
+        },
+        {
+          "name": "Patient Lookup",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer your-secure-webhook-token"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/elevenlabs/patient?patient_name=John Smith&phone_number=+15551234567",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "elevenlabs", "patient"],
+              "query": [
+                {
+                  "key": "patient_name",
+                  "value": "John Smith"
+                },
+                {
+                  "key": "phone_number",
+                  "value": "+15551234567"
+                }
+              ]
+            },
+            "description": "Look up existing patient information"
+          }
+        },
+        {
+          "name": "Verify Insurance",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer your-secure-webhook-token"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"insurance_provider\": \"Blue Cross Blue Shield\",\n  \"member_id\": \"ABC123456789\",\n  \"patient_name\": \"John Smith\",\n  \"date_of_birth\": \"1985-06-20\"\n}"
+            },
+            "url": "{{baseUrl}}/api/elevenlabs/verify-insurance",
+            "description": "Verify patient's insurance coverage"
+          }
+        },
+        {
+          "name": "Get Clinic Information",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer your-secure-webhook-token"
+              }
+            ],
+            "url": "{{baseUrl}}/api/elevenlabs/clinic-info",
+            "description": "Get clinic hours, doctors, and services"
+          }
+        },
+        {
+          "name": "Text to Speech (ElevenLabs Direct)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "xi-api-key",
+                "value": "{{elevenLabsApiKey}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"text\": \"Hello, this is ReddyTalk Medical Center. How can I assist you today?\",\n  \"model_id\": \"eleven_turbo_v2\",\n  \"voice_settings\": {\n    \"stability\": 0.5,\n    \"similarity_boost\": 0.75\n  }\n}"
+            },
+            "url": "https://api.elevenlabs.io/v1/text-to-speech/{{elevenLabsVoiceId}}",
+            "description": "Direct API call to ElevenLabs for text-to-speech"
+          }
+        },
+        {
+          "name": "Get Available Voices (ElevenLabs)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "xi-api-key",
+                "value": "{{elevenLabsApiKey}}"
+              }
+            ],
+            "url": "https://api.elevenlabs.io/v1/voices",
+            "description": "Get list of available voices from ElevenLabs"
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Twilio Voice Integration",
+      "item": [
+        {
+          "name": "Incoming Call Webhook",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "CallSid",
+                  "value": "CA1234567890abcdef"
+                },
+                {
+                  "key": "From",
+                  "value": "+15551234567"
+                },
+                {
+                  "key": "To",
+                  "value": "{{twilioPhoneNumber}}"
+                },
+                {
+                  "key": "CallStatus",
+                  "value": "ringing"
+                }
+              ]
+            },
+            "url": "{{baseUrl}}/api/twilio/voice",
+            "description": "Simulate incoming call webhook from Twilio"
+          }
+        },
+        {
+          "name": "Outbound Call Webhook",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "CallSid",
+                  "value": "CA1234567890abcdef"
+                },
+                {
+                  "key": "From",
+                  "value": "{{twilioPhoneNumber}}"
+                },
+                {
+                  "key": "To",
+                  "value": "+15551234567"
+                },
+                {
+                  "key": "CallStatus",
+                  "value": "in-progress"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/twilio/voice/outbound?sessionId=test-session-123",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "twilio", "voice", "outbound"],
+              "query": [
+                {
+                  "key": "sessionId",
+                  "value": "test-session-123"
+                }
+              ]
+            },
+            "description": "Simulate outbound call connection"
+          }
+        },
+        {
+          "name": "Voice Conversation Flow",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "CallSid",
+                  "value": "CA1234567890abcdef"
+                },
+                {
+                  "key": "From",
+                  "value": "+15551234567"
+                },
+                {
+                  "key": "SpeechResult",
+                  "value": "I need to schedule an appointment"
+                },
+                {
+                  "key": "Confidence",
+                  "value": "0.95"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/twilio/voice/conversation?sessionId=test-session-123",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "twilio", "voice", "conversation"],
+              "query": [
+                {
+                  "key": "sessionId",
+                  "value": "test-session-123"
+                }
+              ]
+            },
+            "description": "Process voice input and generate response"
+          }
+        },
+        {
+          "name": "Gather Voice Input",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "CallSid",
+                  "value": "CA1234567890abcdef"
+                },
+                {
+                  "key": "Digits",
+                  "value": "1"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/twilio/voice/gather?sessionId=test-session-123",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "twilio", "voice", "gather"],
+              "query": [
+                {
+                  "key": "sessionId",
+                  "value": "test-session-123"
+                }
+              ]
+            },
+            "description": "Process DTMF input from phone keypad"
+          }
+        },
+        {
+          "name": "Call Status Callback",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "CallSid",
+                  "value": "CA1234567890abcdef"
+                },
+                {
+                  "key": "CallStatus",
+                  "value": "completed"
+                },
+                {
+                  "key": "CallDuration",
+                  "value": "125"
+                }
+              ]
+            },
+            "url": "{{baseUrl}}/api/twilio/voice/status",
+            "description": "Call status update webhook"
+          }
+        },
+        {
+          "name": "Make Outbound Call (Twilio API)",
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{twilioAccountSid}}"
+                },
+                {
+                  "key": "password",
+                  "value": "{{twilioAuthToken}}"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "To",
+                  "value": "+15551234567"
+                },
+                {
+                  "key": "From",
+                  "value": "{{twilioPhoneNumber}}"
+                },
+                {
+                  "key": "Url",
+                  "value": "{{baseUrl}}/api/twilio/voice/outbound?sessionId=new-outbound-123"
+                },
+                {
+                  "key": "StatusCallback",
+                  "value": "{{baseUrl}}/api/twilio/voice/status"
+                },
+                {
+                  "key": "Method",
+                  "value": "POST"
+                }
+              ]
+            },
+            "url": "https://api.twilio.com/2010-04-01/Accounts/{{twilioAccountSid}}/Calls.json",
+            "description": "Initiate an outbound call via Twilio API"
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Voice Pipeline Testing",
+      "item": [
+        {
+          "name": "Start Voice Session",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"patientName\": \"Test Patient\",\n  \"phoneNumber\": \"+15551234567\",\n  \"channel\": \"voice\"\n}"
+            },
+            "url": "{{baseUrl}}/api/voice/session/start",
+            "description": "Initialize a new voice session"
+          }
+        },
+        {
+          "name": "Process Voice Input",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sessionId\": \"test-session-123\",\n  \"audioData\": \"base64_encoded_audio_here\",\n  \"format\": \"wav\"\n}"
+            },
+            "url": "{{baseUrl}}/api/voice/process",
+            "description": "Process voice audio input"
+          }
+        },
+        {
+          "name": "Generate Voice Response",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sessionId\": \"test-session-123\",\n  \"text\": \"Your appointment has been scheduled for March 15th at 2:30 PM.\",\n  \"voiceId\": \"{{elevenLabsVoiceId}}\"\n}"
+            },
+            "url": "{{baseUrl}}/api/voice/synthesize",
+            "description": "Convert text to speech using ElevenLabs"
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. Patient Management",
+      "item": [
+        {
+          "name": "Get All Patients",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/patients"
+          }
+        },
+        {
+          "name": "Create Patient",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Jane Doe\",\n  \"email\": \"jane.doe@email.com\",\n  \"phone\": \"+15559876543\",\n  \"dateOfBirth\": \"1990-01-15\",\n  \"address\": \"789 Oak Street\",\n  \"insuranceProvider\": \"Aetna\",\n  \"emergencyContact\": \"John Doe - +15551234567\"\n}"
+            },
+            "url": "{{baseUrl}}/api/patients"
+          }
+        },
+        {
+          "name": "Get Patient by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/patients/1"
+          }
+        }
+      ]
+    },
+    {
+      "name": "7. Appointment Management",
+      "item": [
+        {
+          "name": "Get All Appointments",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/appointments"
+          }
+        },
+        {
+          "name": "Create Appointment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"patientId\": 1,\n  \"doctorId\": 2,\n  \"appointmentDate\": \"2024-03-20\",\n  \"appointmentTime\": \"10:00\",\n  \"type\": \"checkup\",\n  \"reason\": \"Annual physical examination\",\n  \"duration\": 30\n}"
+            },
+            "url": "{{baseUrl}}/api/appointments"
+          }
+        },
+        {
+          "name": "Update Appointment Status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"confirmed\"\n}"
+            },
+            "url": "{{baseUrl}}/api/appointments/1/status"
+          }
+        }
+      ]
+    },
+    {
+      "name": "8. WebSocket Testing",
+      "item": [
+        {
+          "name": "WebSocket Connection Info",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/websocket/info",
+            "description": "Get WebSocket connection details for real-time communication"
+          }
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Log response time",
+          "pm.test(\"Response time is less than 2000ms\", function () {",
+          "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+          "});",
+          "",
+          "// Check for successful responses",
+          "if (pm.response.code >= 200 && pm.response.code < 300) {",
+          "    pm.test(\"Status code is successful\", function () {",
+          "        pm.response.to.have.status(200);",
+          "    });",
+          "}"
+        ]
+      }
+    }
+  ]
+}

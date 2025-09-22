@@ -1,0 +1,32 @@
+{
+  "name": "reddytalk-platform",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Enterprise Healthcare Communication Platform",
+  "author": "ReddyTalk Engineering Team",
+  "license": "MIT",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "test": "turbo run test",
+    "lint": "turbo run lint",
+    "format": "prettier --write \"**/*.{ts,tsx,md,json}\"",
+    "clean": "turbo run clean && rm -rf node_modules",
+    "typecheck": "turbo run typecheck"
+  },
+  "devDependencies": {
+    "turbo": "latest",
+    "prettier": "^3.0.0",
+    "eslint": "^8.0.0",
+    "typescript": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=8.0.0"
+  },
+  "packageManager": "pnpm@8.0.0"
+}

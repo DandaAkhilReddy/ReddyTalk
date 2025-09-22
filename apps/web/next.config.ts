@@ -11,7 +11,6 @@ const nextConfig: NextConfig = {
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'https://api.reddytalk.ai',
   },
   experimental: {
-    optimizeCss: true,
     optimizePackageImports: ['framer-motion', '@radix-ui/react-dialog'],
   },
 };

@@ -14,8 +14,9 @@ const StatsCounter: React.FC = () => {
 
   useEffect(() => {
     const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting && !isVisible) {
+      (entries) => {
+        const [entry] = entries;
+        if (entry?.isIntersecting && !isVisible) {
           setIsVisible(true);
         }
       },

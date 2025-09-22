@@ -16,24 +16,24 @@ ReddyTalk is a cutting-edge healthcare communication platform that revolutionize
 - **Patient Satisfaction**: Achieve 98% patient satisfaction rates
 - **HIPAA Compliant**: SOC 2 Type II certified for healthcare security
 
-## 🏗 Architecture
+## 🏗 Clean Architecture
 
 ```
 ReddyTalk-Enterprise/
 ├── apps/
-│   ├── web/                    # Public-facing website
-│   ├── dashboard/               # Admin dashboard (post-login)
-│   └── api/                     # Backend API services
+│   ├── web/                    # Public-facing website (Next.js 15.5)
+│   └── dashboard/              # Admin dashboard (React + Charts)
 ├── packages/
-│   ├── ui/                      # Shared UI component library
-│   ├── config/                  # Shared configuration
-│   ├── utils/                   # Shared utilities
-│   └── types/                   # TypeScript type definitions
-├── infrastructure/
-│   ├── terraform/               # Infrastructure as Code
-│   └── kubernetes/              # K8s configurations
-└── docs/                        # Documentation
+│   ├── config/                 # Shared TypeScript configurations
+│   └── ui/                     # Future: Shared UI components
+└── README.md                   # Comprehensive documentation
 ```
+
+**Clean & Organized:**
+- ✅ No test files or unnecessary dependencies
+- ✅ Single MCP server configuration
+- ✅ Minimal, production-focused structure
+- ✅ Clear separation of concerns
 
 ## 🛠 Tech Stack
 
@@ -98,9 +98,8 @@ pnpm dev:api         # API
 # Build for production
 pnpm build
 
-# Run tests
-pnpm test
-pnpm test:e2e
+# Format code
+pnpm format
 
 # Lint and format
 pnpm lint
@@ -254,20 +253,17 @@ terraform plan
 terraform apply
 ```
 
-## 🧪 Testing
+## 🔧 Code Quality
 
 ```bash
-# Unit tests
-pnpm test
+# Lint code
+pnpm lint
 
-# Integration tests
-pnpm test:integration
+# Format code
+pnpm format
 
-# E2E tests
-pnpm test:e2e
-
-# Coverage report
-pnpm test:coverage
+# Type checking
+pnpm typecheck
 ```
 
 ## 📈 Performance Metrics
